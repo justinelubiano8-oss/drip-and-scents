@@ -1,7 +1,6 @@
 // Upload ng images:
 // - Sa localhost (walang S3_BUCKET): sa public/uploads folder, gaya ng dati.
-// - Online (may S3_BUCKET): sa Supabase Storage gamit ang S3-compatible na koneksyon,
-//   para hindi mawala ang images tuwing magre-redeploy ang Render.
+// - Online (may S3_BUCKET): sa Supabase Storage gamit ang S3-compatible na koneksyon.
 export default ({ env }: { env: any }) => {
   if (!env('S3_BUCKET')) return {};
 
@@ -19,6 +18,9 @@ export default ({ env }: { env: any }) => {
             region: env('S3_REGION'),
             endpoint: env('S3_ENDPOINT'),
             forcePathStyle: true,
+            // Hindi suportado ng Supabase ang bagong checksum ng AWS SDK
+            requestChecksumCalculation: 'WHEN_REQUIRED',
+            responseChecksumValidation: 'WHEN_REQUIRED',
             params: {
               Bucket: env('S3_BUCKET'),
             },
