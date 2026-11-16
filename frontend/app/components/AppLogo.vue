@@ -1,0 +1,11 @@
+<!-- Drip & Scents logo mark: isang patak (drip / scent) na may italic na ampersand sa loob -->
+<template>
+  <svg :width="size" :height="size * 1.16" viewBox="0 0 100 116" fill="none" role="img" aria-label="Drip & Scents logo">
+    <path d="M50 6 C50 6 15 47 15 75 A35 35 0 0 0 85 75 C85 47 50 6 50 6 Z" :stroke="color" stroke-width="4.5" stroke-linejoin="round" />
+    <path :fill="color" transform="translate(50 77) scale(0.06140 -0.06140) translate(-399.5 -324)" d="M586 572Q586 483 414 397Q452 235 501 160Q548 217 564.0 245.0Q580 273 580 299Q580 315 569.5 322.0Q559 329 530 331V350H715V333Q686 329 671.5 322.5Q657 316 649 300Q624 248 520 125Q550 75 578.5 53.0Q607 31 642 31Q672 31 712 61L723 50Q691 13 661.0 -2.5Q631 -18 594 -18Q519 -18 457 61Q380 12 342.5 -3.0Q305 -18 258 -18Q175 -18 125.5 24.5Q76 67 76 140Q76 166 85.0 190.5Q94 215 105.0 233.0Q116 251 138.5 270.5Q161 290 176.0 301.0Q191 312 220.0 327.0Q249 342 260.0 347.5Q271 353 300.5 365.0Q330 377 331 378Q331 385 327.5 417.0Q324 449 324 460Q324 551 369.0 608.5Q414 666 484 666Q527 666 556.5 639.0Q586 612 586 572ZM333 345Q258 317 214.0 267.5Q170 218 170 164Q170 109 206.5 71.5Q243 34 298 34Q371 34 438 90Q387 154 333 345ZM410 428Q474 468 495.5 498.5Q517 529 517 577Q517 607 506.5 620.5Q496 634 472 634Q405 634 405 504Q405 466 410 428Z" />
+  </svg>
+</template>
+
+<script setup lang="ts">
+withDefaults(defineProps<{ size?: number; color?: string }>(), { size: 30, color: '#C4A06A' })
+</script>
