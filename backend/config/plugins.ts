@@ -1,30 +1,17 @@
 // Upload ng images:
-// - Sa localhost (walang S3_BUCKET): sa public/uploads folder, gaya ng dati.
-// - Online (may S3_BUCKET): sa Supabase Storage gamit ang S3-compatible na koneksyon.
+// - Localhost (walang CLOUDINARY_NAME): sa public/uploads folder, gaya ng dati.
+// - Online (may CLOUDINARY_NAME): sa Cloudinary, para hindi mawala ang images sa Render.
 export default ({ env }: { env: any }) => {
-  if (!env('S3_BUCKET')) return {};
+  if (!env('CLOUDINARY_NAME')) return {};
 
   return {
     upload: {
       config: {
-        provider: 'aws-s3',
+        provider: 'cloudinary',
         providerOptions: {
-          baseUrl: env('S3_PUBLIC_URL'),
-          s3Options: {
-            credentials: {
-              accessKeyId: env('S3_ACCESS_KEY_ID'),
-              secretAccessKey: env('S3_SECRET_ACCESS_KEY'),
-            },
-            region: env('S3_REGION'),
-            endpoint: env('S3_ENDPOINT'),
-            forcePathStyle: true,
-            // Hindi suportado ng Supabase ang bagong checksum ng AWS SDK
-            requestChecksumCalculation: 'WHEN_REQUIRED',
-            responseChecksumValidation: 'WHEN_REQUIRED',
-            params: {
-              Bucket: env('S3_BUCKET'),
-            },
-          },
+          cloud_name: env('CLOUDINARY_NAME'),
+          api_key: env('CLOUDINARY_KEY'),
+          api_secret: env('CLOUDINARY_SECRET'),
         },
         actionOptions: {
           upload: {},

@@ -1,8 +1,6 @@
-// Pinapayagan ang admin panel na magpakita ng images galing Supabase Storage,
-// at kinokontrol kung aling website ang pwedeng tumawag sa API (CORS).
+// Pinapayagan ang admin panel na magpakita ng images galing Cloudinary.
 export default ({ env }: { env: any }) => {
-  const storageHost = env('S3_PUBLIC_HOST', '');
-  const imgSources = ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', storageHost].filter(Boolean);
+  const imgSources = ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', 'res.cloudinary.com'];
 
   return [
     'strapi::logger',
