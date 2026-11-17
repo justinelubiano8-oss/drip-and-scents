@@ -9,13 +9,26 @@
         </span>
       </NuxtLink>
 
-      <nav class="nav d-none d-sm-flex">
-        <NuxtLink to="/" class="nav-link" exact-active-class="is-active">Shop</NuxtLink>
+      <nav class="nav d-none d-md-flex" aria-label="Main">
+        <NuxtLink to="/" class="nav-link" exact-active-class="is-active">Home</NuxtLink>
+        <NuxtLink to="/shop" class="nav-link" active-class="is-active">Shop</NuxtLink>
+        <NuxtLink to="/about" class="nav-link" active-class="is-active">Our story</NuxtLink>
         <NuxtLink to="/products" class="nav-link" active-class="is-active">Manage products</NuxtLink>
       </nav>
 
       <div class="actions">
-        <v-btn class="d-sm-none" to="/products" icon="mdi-cog-outline" variant="text" color="#F4EDE6" aria-label="Manage products" />
+        <!-- Mobile menu -->
+        <v-menu location="bottom end">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" class="d-md-none" icon="mdi-menu" variant="text" color="#F4EDE6" aria-label="Open menu" />
+          </template>
+          <v-list min-width="220">
+            <v-list-item to="/" title="Home" prepend-icon="mdi-home-outline" />
+            <v-list-item to="/shop" title="Shop" prepend-icon="mdi-storefront-outline" />
+            <v-list-item to="/about" title="Our story" prepend-icon="mdi-book-open-variant" />
+            <v-list-item to="/products" title="Manage products" prepend-icon="mdi-cog-outline" />
+          </v-list>
+        </v-menu>
 
         <!-- Wishlist -->
         <v-menu location="bottom end" :close-on-content-click="false">
@@ -71,8 +84,9 @@ const { notify } = useNotify()
 async function moveToCart(p: Product) {
   const config = variantConfig(p.category)
   if (config) {
-    notify('Choose a size on the product card first.', 'info')
-    document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })
+    // May size ang product: dalhin sa product page para makapili
+    notify('Choose a size first.', 'info')
+    await navigateTo(`/product/${p.documentId}`)
     return
   }
   try {

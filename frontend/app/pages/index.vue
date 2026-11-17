@@ -1,163 +1,78 @@
 <template>
   <div>
-    <!-- HERO (dark, full-bleed) -->
+    <!-- HERO: welcome lang, walang products -->
     <section class="hero">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <h1 class="hero-title">Dressed in<br>every detail.</h1>
-          <p class="hero-lede">
-            Fragrance, footwear, bags and clothing, curated to be worn together.
-            Every order checks live stock before it is confirmed.
-          </p>
-          <div class="hero-actions">
-            <v-btn size="x-large" class="btn-gold" @click="scrollToProducts">Shop the collection</v-btn>
-            <v-btn size="x-large" variant="outlined" class="btn-ghost" to="/products">Manage products</v-btn>
-          </div>
-          <dl class="hero-facts">
-            <div><dt>{{ activeProducts.length }}</dt><dd>pieces available</dd></div>
-            <div><dt>{{ categories.length }}</dt><dd>{{ categories.length === 1 ? 'category' : 'categories' }}</dd></div>
-            <div><dt>2–3</dt><dd>days delivery</dd></div>
-          </dl>
-        </div>
+      <div class="hero-frame" aria-hidden="true">
+        <span class="corner tl" /><span class="corner tr" /><span class="corner bl" /><span class="corner br" />
+      </div>
 
-        <!-- Stacked product photos galing Strapi -->
-        <div class="stack" aria-hidden="true">
-          <div v-if="heroImages[1]" class="tile tile-left"><img :src="heroImages[1]" alt=""></div>
-          <div v-if="heroImages[2]" class="tile tile-right"><img :src="heroImages[2]" alt=""></div>
-          <div class="arch"><img v-if="heroImages[0]" :src="heroImages[0]" alt=""></div>
-          <div v-if="heroProducts[0]" class="hero-caption">
-            <span class="cap-name">{{ heroProducts[0].name }}</span>
-            <span class="cap-price">{{ formatPrice(heroProducts[0].price) }}</span>
+      <div class="wrap hero-inner">
+        <div class="hero-mark" aria-hidden="true"><AppLogo :size="58" /></div>
+        <p class="hero-welcome">Welcome to Drip &amp; Scents</p>
+        <h1 class="hero-title">Find your signature,<br>from scent to sole.</h1>
+        <div class="ornament" aria-hidden="true"><span /><i /><span /></div>
+        <p class="hero-lede">
+          Hand-picked perfumes, shoes, bags and clothes for people who notice the details.
+          Take your time, look around, and make it yours.
+        </p>
+        <div class="hero-actions">
+          <v-btn size="x-large" class="btn-gold" to="/shop" append-icon="mdi-arrow-right">Go to products</v-btn>
+          <v-btn size="x-large" variant="outlined" class="btn-ghost" to="/about">Our story</v-btn>
+        </div>
+      </div>
+
+      <a href="#discover" class="scroll-hint">Discover more <v-icon icon="mdi-chevron-down" size="18" /></a>
+    </section>
+
+    <!-- PROMISES -->
+    <section id="discover" class="promises">
+      <div class="wrap promises-grid">
+        <div v-for="p in promises" :key="p.title" class="promise">
+          <v-icon :icon="p.icon" size="26" />
+          <div>
+            <div class="promise-title">{{ p.title }}</div>
+            <div class="promise-text">{{ p.text }}</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SIGNATURE PICK -->
-    <section v-if="signature" class="wrap signature">
-      <div class="sig-media">
-        <template v-if="mediaUrl(signature.image)">
-          <div class="sig-blur" :style="{ backgroundImage: `url('${mediaUrl(signature.image)}')` }" aria-hidden="true" />
-          <img :src="mediaUrl(signature.image)" :alt="signature.name">
-        </template>
+    <!-- WHAT WE CARRY: categories lang (walang product listing) -->
+    <section class="wrap block">
+      <div class="block-head">
+        <p class="eyebrow-gold">What we carry</p>
+        <h2 class="block-title">Four houses, one look</h2>
+        <p class="block-lede">Everything is chosen to be worn together. Pick a world to begin.</p>
       </div>
-      <div class="sig-copy">
-        <h2 class="sig-label">This week’s signature</h2>
-        <p class="sig-cat">{{ signature.category }}</p>
-        <h3 class="sig-name">{{ signature.name }}</h3>
-        <p class="sig-desc">{{ signature.description || 'A standout piece from the collection.' }}</p>
-        <div class="sig-price">
-          <span v-if="sigConfig && !sigSize && hasPriceRange(sigConfig.options)" class="sig-from">From </span>{{ formatPrice(priceFor(signature.price, sigSize)) }}
-        </div>
-        <div v-if="sigConfig" class="sig-sizes" role="radiogroup" :aria-label="sigConfig.label">
-          <span class="sig-sizes-label">{{ sigConfig.label }}</span>
-          <div class="sig-sizes-row">
-            <button
-              v-for="opt in sigConfig.options" :key="opt" type="button" role="radio"
-              class="sig-size" :class="{ active: sigSize === opt }" :aria-checked="sigSize === opt"
-              @click="sigSize = opt"
-            >{{ opt }}</button>
-          </div>
-        </div>
-        <div class="sig-actions">
-          <v-btn color="primary" size="x-large" :disabled="signatureRemaining <= 0" @click="addSignature">
-            {{ signatureRemaining <= 0 ? 'All stock in your cart'
-              : sigConfig && !sigSize ? 'Select size'
-              : sigSize ? `Add to cart · ${sigSize}` : 'Add to cart' }}
-          </v-btn>
-          <span class="sig-stock">{{ signature.stock }} in stock</span>
-        </div>
-      </div>
-    </section>
 
-    <!-- CATEGORIES -->
-    <section class="wrap cats">
-      <h2 class="section-title">Shop by category</h2>
-      <div class="cat-list" role="tablist">
-        <button
-          v-for="cat in ['All Categories', ...categories]" :key="cat" type="button" role="tab"
-          class="cat" :class="{ active: selectedCategory === cat }" :aria-selected="selectedCategory === cat"
-          @click="pickCategory(cat)"
+      <div class="houses">
+        <NuxtLink
+          v-for="c in houses" :key="c.name"
+          :to="c.count ? { path: '/shop', query: { category: c.name } } : '/shop'" class="house"
         >
-          {{ cat === 'All Categories' ? 'All' : cat }}
-        </button>
+          <span class="house-icon"><v-icon :icon="c.icon" size="30" /></span>
+          <span class="house-name">{{ c.name }}</span>
+          <span class="house-text">{{ c.text }}</span>
+          <span class="house-link">
+            {{ c.count ? `Explore ${c.count} ${c.count === 1 ? 'piece' : 'pieces'}` : 'Explore' }}
+            <v-icon icon="mdi-arrow-right" size="16" />
+          </span>
+        </NuxtLink>
       </div>
     </section>
 
-    <!-- PROMO -->
-    <section class="promo">
-      <div class="wrap promo-inner">
-        <div>
-          <h2 class="promo-title">Complimentary delivery on orders over ₱5,000</h2>
-          <p class="promo-text">Pair a scent with a bag, a fit, or a fresh pair. Applied automatically at checkout.</p>
-        </div>
-        <v-btn size="large" class="btn-gold" @click="scrollToProducts">Start shopping</v-btn>
-      </div>
+    <!-- QUOTE -->
+    <section class="wrap quote">
+      <p class="quote-text">“Style is what people see first. Scent is what they remember.”</p>
+      <p class="quote-by">The Drip &amp; Scents promise</p>
     </section>
 
-    <!-- PRODUCTS -->
-    <section id="products" class="wrap collection">
-      <div class="collection-head">
-        <div>
-          <h2 class="section-title mb-1">The collection</h2>
-          <p class="count">{{ filteredProducts.length }} of {{ activeProducts.length }} pieces</p>
-        </div>
-        <div class="filters">
-          <v-text-field
-            v-model="search" placeholder="Search name, description, category"
-            prepend-inner-icon="mdi-magnify" clearable hide-details bg-color="surface"
-            style="min-width: 260px"
-          />
-          <v-select
-            v-model="selectedCategory" :items="['All Categories', ...categories]"
-            hide-details bg-color="surface" style="min-width: 200px"
-          />
-        </div>
-      </div>
-
-      <v-alert v-if="error" type="error" variant="tonal" class="mb-6">
-        Could not load products: {{ errorMessage(error) }}
-        <template #append><v-btn variant="text" @click="refresh()">Try again</v-btn></template>
-      </v-alert>
-
-      <v-row v-if="pending">
-        <v-col v-for="n in 8" :key="n" cols="12" sm="6" md="4" lg="3">
-          <v-skeleton-loader type="image, article" />
-        </v-col>
-      </v-row>
-
-      <template v-else-if="filteredProducts.length">
-        <!-- All categories: naka-grupo bawat category -->
-        <div v-if="showGroups">
-          <section v-for="g in groups" :key="g.category" class="group">
-            <div class="group-head">
-              <div class="group-left">
-                <h3 class="group-title">{{ g.category }}</h3>
-                <span class="group-count">{{ g.products.length }} {{ g.products.length === 1 ? 'piece' : 'pieces' }}</span>
-              </div>
-              <button type="button" class="group-link" @click="selectedCategory = g.category">
-                View only {{ g.category }} <v-icon icon="mdi-arrow-right" size="16" />
-              </button>
-            </div>
-            <v-row class="grid">
-              <v-col v-for="p in g.products" :key="p.documentId" cols="12" sm="6" md="4" lg="3">
-                <ProductCard :product="p" />
-              </v-col>
-            </v-row>
-          </section>
-        </div>
-
-        <!-- Isang category lang -->
-        <v-row v-else class="grid">
-          <v-col v-for="p in filteredProducts" :key="p.documentId" cols="12" sm="6" md="4" lg="3">
-            <ProductCard :product="p" />
-          </v-col>
-        </v-row>
-      </template>
-
-      <div v-else-if="!error" class="empty">
-        <p class="empty-title">No pieces match your search.</p>
-        <v-btn color="primary" variant="outlined" @click="resetFilters">Show the full collection</v-btn>
+    <!-- CLOSING CTA -->
+    <section class="closing">
+      <div class="wrap closing-inner">
+        <h2 class="closing-title">Ready when you are.</h2>
+        <p class="closing-text">Free delivery on orders over ₱5,000, applied automatically at checkout.</p>
+        <v-btn size="x-large" class="btn-gold" to="/shop" append-icon="mdi-arrow-right">Go to products</v-btn>
       </div>
     </section>
 
@@ -166,10 +81,7 @@
       <h2 class="news-title">First to know about new arrivals</h2>
       <p class="news-text">One short email a week with new scents, soles, bags and fits, plus private offers.</p>
       <v-form ref="newsletterForm" class="news-form" @submit.prevent="subscribe">
-        <v-text-field
-          v-model="email" :rules="[emailRule]" placeholder="you@example.com"
-          bg-color="surface" class="flex-grow-1"
-        />
+        <v-text-field v-model="email" :rules="[emailRule]" placeholder="you@example.com" bg-color="surface" class="flex-grow-1" />
         <v-btn type="submit" color="primary" size="x-large">Subscribe</v-btn>
       </v-form>
     </section>
@@ -177,91 +89,34 @@
 </template>
 
 <script setup lang="ts">
-import type { Product } from '~/types'
-
-const { getActiveProducts, errorMessage, mediaUrl } = useStrapi()
-const { syncStock, addToCart, quantityOf } = useCart()
+const { getActiveProducts } = useStrapi()
 const { notify } = useNotify()
 
-// Kinukuha ang active products sa Strapi (key 'products' para ma-refresh pagkatapos ng checkout)
-const { data, pending, error, refresh } = await useAsyncData('products', () => getActiveProducts())
+useHead({ title: 'Drip & Scents — Perfume · Shoes · Bags · Clothes' })
 
+// Kinukuha pa rin sa Strapi para sa bilang ng pieces bawat category (hindi ipinapakita ang products)
+const { data } = await useAsyncData('products', () => getActiveProducts())
 const activeProducts = computed(() => (data.value?.data ?? []).filter((p) => p.isActive))
 
-// Hanggang 3 products na may image para sa hero
-const heroProducts = computed(() => activeProducts.value.filter((p) => p.image?.url).slice(0, 3))
-const heroImages = computed(() => heroProducts.value.map((p) => mediaUrl(p.image)))
+const promises = [
+  { icon: 'mdi-diamond-stone', title: 'Hand-picked pieces', text: 'A small, curated collection' },
+  { icon: 'mdi-truck-fast-outline', title: 'Free delivery', text: 'On orders over ₱5,000' },
+  { icon: 'mdi-shield-check-outline', title: 'Secure checkout', text: 'Live stock, confirmed at order' }
+]
 
-// Signature pick: pinakamahal na product na may stock pa
-const signature = computed(() =>
-  [...activeProducts.value].filter((p) => p.stock > 0).sort((a, b) => Number(b.price) - Number(a.price))[0]
-)
-const signatureRemaining = computed(() =>
-  signature.value ? signature.value.stock - quantityOf(signature.value.documentId) : 0
-)
-const sigConfig = computed(() => variantConfig(signature.value?.category))
-const sigSize = ref<string | null>(null)
-watch(() => signature.value?.documentId, () => { sigSize.value = null })
-
-function addSignature() {
-  if (!signature.value) return
-  if (sigConfig.value && !sigSize.value) {
-    notify('Please choose a size first.', 'warning')
-    return
-  }
-  const res = addToCart(signature.value, 1, sigSize.value)
-  notify(res.message, res.ok ? 'success' : 'error')
-}
-
-// Unique na categories galing mismo sa products (hindi hardcoded)
-const categories = computed(() =>
-  [...new Set(activeProducts.value.map((p) => p.category).filter(Boolean))].sort()
-)
-
-const search = ref('')
-const selectedCategory = ref('All Categories')
-
-// Search (name / description / category) + category filter
-const filteredProducts = computed(() => {
-  const q = (search.value || '').trim().toLowerCase()
-  return activeProducts.value.filter((p) => {
-    const matchesCategory = selectedCategory.value === 'All Categories' || p.category === selectedCategory.value
-    const matchesSearch = !q ||
-      p.name.toLowerCase().includes(q) ||
-      (p.description || '').toLowerCase().includes(q) ||
-      (p.category || '').toLowerCase().includes(q)
-    return matchesCategory && matchesSearch
+// Ang apat na "house" ng tindahan; ikinakabit sa totoong category sa Strapi
+const houseDefs = [
+  { key: 'perfume', name: 'Perfume', icon: 'mdi-spray-bottle', text: 'Signature scents in 50 ml and 100 ml.' },
+  { key: 'shoe', name: 'Shoes', icon: 'mdi-shoe-sneaker', text: 'Fresh pairs, EU sizes 40 to 45.' },
+  { key: 'bag', name: 'Bag', icon: 'mdi-bag-personal-outline', text: 'Everyday carry, made to last.' },
+  { key: 'cloth', name: 'Clothes', icon: 'mdi-tshirt-crew-outline', text: 'Tees and hoodies, S to XL.' }
+]
+const houses = computed(() =>
+  houseDefs.map((h) => {
+    const match = activeProducts.value.filter((p) => (p.category || '').toLowerCase().includes(h.key))
+    return { ...h, name: match[0]?.category || h.name, count: match.length }
   })
-})
-
-// Kapag "All Categories": i-grupo ang products ayon sa category
-const showGroups = computed(() => selectedCategory.value === 'All Categories')
-const groups = computed(() => {
-  const map = new Map<string, Product[]>()
-  for (const p of filteredProducts.value) {
-    const list = map.get(p.category) || []
-    list.push(p)
-    map.set(p.category, list)
-  }
-  return [...map.entries()]
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([category, products]) => ({ category, products }))
-})
-
-// Pag may bagong product data, i-sync ang stock ng nasa cart
-watch(activeProducts, (list) => syncStock(list), { immediate: true })
-
-function scrollToProducts() {
-  document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })
-}
-function pickCategory(cat: string) {
-  selectedCategory.value = cat
-  scrollToProducts()
-}
-function resetFilters() {
-  search.value = ''
-  selectedCategory.value = 'All Categories'
-}
+)
 
 // Newsletter (front-end validation lang)
 const email = ref('')
@@ -276,157 +131,109 @@ async function subscribe() {
 </script>
 
 <style scoped>
-/* ---------- Buttons ---------- */
 .btn-gold { background: var(--gold) !important; color: var(--night) !important; }
 .btn-gold:hover { background: #D3B07A !important; }
 .btn-ghost { color: var(--ivory) !important; border-color: rgba(244, 237, 230, 0.4) !important; }
 
-/* ---------- HERO ---------- */
+/* HERO: buong screen, nakagitna */
 .hero {
-  background:
-    radial-gradient(ellipse 60% 70% at 78% 45%, rgba(91, 30, 45, 0.55), transparent 70%),
-    var(--night);
-  border-bottom: 1px solid rgba(196, 160, 106, 0.2);
-  color: var(--ivory);
+  position: relative;
+  min-height: calc(100vh - 76px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 80px 0 96px;
+  text-align: center;
   overflow: hidden;
 }
-.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.hero-frame { position: absolute; inset: 28px; border: 1px solid rgba(196, 160, 106, 0.28); pointer-events: none; }
+.hero-frame::after { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(196, 160, 106, 0.12); }
+.corner { position: absolute; width: 26px; height: 26px; border-color: var(--gold); border-style: solid; border-width: 0; }
+.corner.tl { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
+.corner.tr { top: -1px; right: -1px; border-top-width: 2px; border-right-width: 2px; }
+.corner.bl { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; }
+.corner.br { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.hero-inner { position: relative; max-width: 900px; }
+.hero-mark { display: inline-flex; margin-bottom: 18px; }
+.hero-welcome { color: var(--gold); font-weight: 600; letter-spacing: 0.04em; margin: 0 0 18px; }
 .hero-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(3rem, 6.4vw, 5.6rem);
-  line-height: 0.98;
-  margin: 0 0 28px;
-  color: var(--ivory);
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(3rem, 7vw, 6rem); line-height: 0.98;
+  margin: 0; color: var(--ivory);
 }
-.hero-lede { font-size: 1.1rem; line-height: 1.7; color: var(--ivory-muted); max-width: 44ch; margin: 0 0 36px; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 56px; }
-.hero-facts { display: flex; gap: 48px; margin: 0; padding-top: 28px; border-top: 1px solid rgba(176, 141, 87, 0.45); }
-.hero-facts dt { font-family: var(--font-display); font-size: 2.4rem; font-weight: 600; line-height: 1; color: var(--gold); }
-.hero-facts dd { margin: 6px 0 0; font-size: 0.85rem; color: var(--ivory-muted); }
+.ornament { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 30px auto; }
+.ornament span { width: 70px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+.ornament span:last-child { transform: scaleX(-1); }
+.ornament i { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); }
+.hero-lede { font-size: 1.15rem; line-height: 1.8; color: var(--ivory-muted); max-width: 52ch; margin: 0 auto 38px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.scroll-hint {
+  position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
+  color: var(--ivory-muted); text-decoration: none; font-size: 0.85rem;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.scroll-hint:hover { color: var(--gold); }
 
-/* Photo stack */
-.stack { position: relative; height: 580px; }
-.stack img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.arch {
-  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-  width: 62%; height: 100%;
-  border-radius: 999px 999px 0 0;
-  overflow: hidden;
-  background: #2A1F1C;
-  outline: 1px solid rgba(176, 141, 87, 0.6);
-  outline-offset: 10px;
-  z-index: 2;
-}
-.tile {
-  position: absolute; width: 38%; aspect-ratio: 3 / 4;
-  overflow: hidden; background: #2A1F1C;
-  border: 1px solid rgba(244, 237, 230, 0.12);
-  z-index: 1; opacity: 0.9;
-}
-.tile-left { left: 0; top: 18%; transform: rotate(-5deg); }
-.tile-right { right: 0; top: 34%; transform: rotate(5deg); }
-.hero-caption {
-  position: absolute; left: 8%; bottom: 28px; z-index: 3;
-  background: var(--ivory); color: var(--paper);
-  padding: 14px 20px;
-  display: flex; flex-direction: column; gap: 2px;
-}
-.cap-name { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; }
-.cap-price { font-size: 0.85rem; color: #6F6863; }
+/* PROMISES */
+.promises { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(14, 10, 9, 0.55); backdrop-filter: blur(2px); }
+.promises-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding-top: 30px; padding-bottom: 30px; }
+.promise { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.promise .v-icon { color: var(--gold); }
+.promise-title { font-weight: 700; }
+.promise-text { color: var(--muted); font-size: 0.88rem; }
 
-/* ---------- SIGNATURE ---------- */
-.signature {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
-  padding-top: 112px; padding-bottom: 96px;
+/* HOUSES (categories) */
+.block { padding-top: 120px; }
+.block-head { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+.eyebrow-gold { color: var(--gold); font-weight: 600; margin: 0 0 10px; }
+.block-title { font-family: var(--font-display); font-size: clamp(2.4rem, 4.4vw, 3.4rem); font-weight: 600; margin: 0 0 12px; line-height: 1.02; }
+.block-lede { color: var(--muted); margin: 0; }
+.houses { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.house {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  padding: 34px 28px 30px; min-height: 280px;
+  text-decoration: none; color: var(--ink);
+  background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+  border: 1px solid var(--line);
+  transition: border-color 0.35s ease, transform 0.35s cubic-bezier(.2,.7,.2,1), background 0.35s ease;
 }
-.sig-media { aspect-ratio: 1; background: #F4F2EF; overflow: hidden; outline: 1px solid rgba(196, 160, 106, 0.45); outline-offset: 12px; }
-.sig-media { position: relative; }
-.sig-blur { position: absolute; inset: -30px; background-size: cover; background-position: center; filter: blur(28px); opacity: 0.85; }
-.sig-media img { position: relative; width: 100%; height: 100%; object-fit: contain; display: block; }
-.sig-label { font-family: var(--font-ui); font-size: 0.95rem; font-weight: 600; color: var(--gold); margin: 0 0 24px; }
-.sig-cat { color: var(--gold); font-weight: 600; font-size: 0.9rem; margin: 0 0 6px; }
-.sig-name { font-family: var(--font-display); font-size: clamp(2.4rem, 4vw, 3.6rem); font-weight: 600; line-height: 1.02; margin: 0 0 20px; }
-.sig-desc { color: var(--muted); line-height: 1.75; max-width: 52ch; margin: 0 0 28px; }
-.sig-price { font-family: var(--font-display); font-size: 2rem; font-weight: 600; margin-bottom: 24px; }
-.sig-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.sig-sizes { margin: -4px 0 24px; }
-.sig-from { font-family: var(--font-ui); font-size: 1rem; color: var(--muted); font-weight: 500; }
-.sig-sizes-label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
-.sig-sizes-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.sig-size {
-  min-width: 56px; height: 42px; padding: 0 14px;
-  background: transparent; color: var(--ink);
-  border: 1px solid var(--line); border-radius: 2px;
-  font: inherit; font-weight: 500; cursor: pointer;
+.house:hover { border-color: rgba(196, 160, 106, 0.6); transform: translateY(-6px); background: linear-gradient(180deg, rgba(196,160,106,0.08), rgba(255,255,255,0.01)); }
+.house:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.house-icon {
+  width: 60px; height: 60px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(196, 160, 106, 0.5); border-radius: 999px 999px 0 0; color: var(--gold); margin-bottom: 8px;
 }
-.sig-size:hover { border-color: var(--gold); }
-.sig-size.active { background: var(--gold); border-color: var(--gold); color: var(--night); font-weight: 700; }
-.sig-stock { color: var(--muted); font-size: 0.9rem; }
+.house-name { font-family: var(--font-display); font-size: 1.9rem; font-weight: 600; line-height: 1; }
+.house-text { color: var(--muted); line-height: 1.6; flex: 1; }
+.house-link { color: var(--gold); font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; }
 
-/* ---------- CATEGORIES ---------- */
-.section-title { font-family: var(--font-display); font-size: 2.4rem; font-weight: 600; margin: 0 0 20px; line-height: 1.1; }
-.cats { padding-bottom: 56px; }
-.cat-list { display: flex; flex-wrap: wrap; gap: 30px; border-bottom: 1px solid var(--line); }
-.cat {
-  background: none; border: 0; cursor: pointer;
-  padding: 0 0 12px; margin-bottom: -1px;
-  font: inherit; font-size: 1rem; font-weight: 500;
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-}
-.cat:hover { color: var(--ink); }
-.cat.active { color: var(--ink); border-bottom-color: var(--gold); }
+/* QUOTE */
+.quote { text-align: center; padding-top: 128px; max-width: 860px; }
+.quote-text { font-family: var(--font-display); font-style: italic; font-size: clamp(1.8rem, 3.4vw, 2.6rem); line-height: 1.3; margin: 0 0 16px; color: var(--ivory); }
+.quote-by { color: var(--gold); font-weight: 600; margin: 0; }
 
-/* ---------- PROMO ---------- */
-.promo { background: linear-gradient(100deg, #4A1724, #5B1E2D 55%, #3A121C); color: #F3E9E4; border-top: 1px solid rgba(196,160,106,.25); border-bottom: 1px solid rgba(196,160,106,.25); }
-.promo-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 44px; padding-bottom: 44px; flex-wrap: wrap; }
-.promo-title { font-family: var(--font-display); font-size: 2.1rem; font-weight: 600; color: #fff; margin: 0 0 6px; line-height: 1.15; }
-.promo-text { margin: 0; opacity: .85; }
-
-/* ---------- COLLECTION ---------- */
-.collection { padding-top: 88px; }
-.collection-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 32px; }
-.count { color: var(--muted); margin: 0; font-size: 0.9rem; }
-.filters { display: flex; flex-wrap: wrap; gap: 12px; }
-.grid { row-gap: 28px; }
-.group + .group { margin-top: 72px; }
-.group-head {
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  padding-bottom: 14px; margin-bottom: 24px;
-  border-bottom: 1px solid rgba(196, 160, 106, 0.35);
+/* CLOSING */
+.closing {
+  margin-top: 128px;
+  background: linear-gradient(100deg, #3E1420, #5B1E2D 50%, #35101A);
+  border-top: 1px solid rgba(196,160,106,.3); border-bottom: 1px solid rgba(196,160,106,.3);
 }
-.group-left { display: flex; align-items: baseline; gap: 14px; }
-.group-title { font-family: var(--font-display); font-size: 2rem; font-weight: 600; margin: 0; line-height: 1; }
-.group-count { color: var(--muted); font-size: 0.9rem; }
-.group-link {
-  background: none; border: 0; cursor: pointer; font: inherit;
-  color: var(--gold); font-weight: 600; font-size: 0.9rem;
-  display: inline-flex; align-items: center; gap: 6px;
-}
-.group-link:hover { color: #D3B07A; }
-.empty { text-align: center; padding: 64px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.empty-title { font-family: var(--font-display); font-size: 1.6rem; margin: 0 0 16px; }
+.closing-inner { text-align: center; padding-top: 72px; padding-bottom: 72px; }
+.closing-title { font-family: var(--font-display); font-size: clamp(2.4rem, 4.4vw, 3.4rem); font-weight: 600; color: #fff; margin: 0 0 10px; }
+.closing-text { color: #F3E9E4; opacity: 0.85; margin: 0 0 28px; }
 
-/* ---------- NEWSLETTER ---------- */
+/* NEWSLETTER */
 .newsletter { text-align: center; padding-top: 112px; max-width: 720px; }
 .news-title { font-family: var(--font-display); font-size: 2.6rem; font-weight: 600; margin: 0 0 10px; line-height: 1.1; }
 .news-text { color: var(--muted); margin: 0 0 28px; }
 .news-form { display: flex; gap: 12px; align-items: flex-start; text-align: left; }
 
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 960px) {
-  .hero { padding: 48px 0 64px; }
-  .hero-grid, .signature { grid-template-columns: 1fr; gap: 48px; }
-  .stack { height: 440px; max-width: 460px; width: 100%; margin: 0 auto; }
-  .signature { padding-top: 72px; padding-bottom: 64px; }
-}
-@media (max-width: 600px) {
-  .hero-facts { gap: 28px; }
-  .stack { height: 360px; }
+@media (max-width: 1000px) { .houses { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) {
+  .hero-frame { inset: 12px; }
+  .promises-grid { grid-template-columns: 1fr; gap: 14px; }
+  .promise { justify-content: flex-start; }
+  .houses { grid-template-columns: 1fr; }
+  .block { padding-top: 80px; }
   .news-form { flex-direction: column; align-items: stretch; }
-  .filters { width: 100%; }
-  .filters > * { flex: 1 1 100%; }
 }
 </style>

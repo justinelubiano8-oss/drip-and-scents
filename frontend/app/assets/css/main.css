@@ -27,16 +27,17 @@
 }
 .v-application { color: var(--ink); font-variant-numeric: lining-nums; }
 
-/* Premium page background: fine film grain, warm spotlight, wine glows, dark vignette */
+/* Premium page background: noir na may pinong gold na diamond lattice,
+   malambot na gold spotlight sa itaas, wine glow sa ibaba, at vignette */
 .v-application .v-main {
   background:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 0.95  0 0 0 0 0.88  0 0 0 0.055 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
-    radial-gradient(ellipse 120% 80% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%),
-    radial-gradient(900px 500px at 50% -10%, rgba(196, 160, 106, 0.16), transparent 65%),
-    radial-gradient(800px 600px at 0% 45%, rgba(91, 30, 45, 0.32), transparent 65%),
-    radial-gradient(800px 600px at 100% 85%, rgba(91, 30, 45, 0.26), transparent 65%),
-    linear-gradient(180deg, #17110F 0%, #110C0B 50%, #0D0908 100%) !important;
-  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat !important;
+    radial-gradient(ellipse 120% 85% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.6) 100%),
+    radial-gradient(1100px 620px at 50% -12%, rgba(196, 160, 106, 0.18), transparent 65%),
+    radial-gradient(900px 700px at 0% 70%, rgba(91, 30, 45, 0.28), transparent 65%),
+    radial-gradient(900px 700px at 100% 100%, rgba(91, 30, 45, 0.24), transparent 65%),
+    repeating-linear-gradient(45deg, rgba(196, 160, 106, 0.035) 0 1px, transparent 1px 34px),
+    repeating-linear-gradient(-45deg, rgba(196, 160, 106, 0.035) 0 1px, transparent 1px 34px),
+    linear-gradient(180deg, #100C0B 0%, #0C0908 55%, #090706 100%) !important;
   background-attachment: fixed !important;
 }
 .v-application * { font-variant-numeric: lining-nums; }
@@ -81,6 +82,20 @@
   .collection .collection-head,
   .collection .group-head { transition: opacity 0.45s ease; }
 }
+
+/* Page header (Shop, Our story, at iba pa) */
+.page-head { padding: 56px 0 40px; }
+.crumbs { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.85rem; color: var(--muted); margin-bottom: 18px; }
+.crumbs a { color: var(--muted); text-decoration: none; }
+.crumbs a:hover { color: var(--gold); }
+.crumbs [aria-current] { color: var(--ink); }
+.page-title { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4rem); font-weight: 600; line-height: 1; margin: 0 0 14px; }
+.page-lede { color: var(--muted); font-size: 1.05rem; line-height: 1.7; max-width: 60ch; margin: 0; }
+
+/* Paglipat ng page: dahan-dahang fade */
+.page-enter-active, .page-leave-active { transition: opacity 0.28s ease, transform 0.28s ease; }
+.page-enter-from { opacity: 0; transform: translateY(10px); }
+.page-leave-to { opacity: 0; }
 
 /* Shared layout width */
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }

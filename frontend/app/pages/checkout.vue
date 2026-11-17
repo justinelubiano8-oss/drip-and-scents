@@ -10,7 +10,7 @@
       <div v-if="!items.length" class="empty">
         <v-icon icon="mdi-shopping-outline" size="56" class="mb-3" />
         <p class="mb-4">Your cart is empty. Add products before checking out.</p>
-        <v-btn color="primary" to="/">Go to store</v-btn>
+        <v-btn color="primary" to="/shop">Go to the shop</v-btn>
       </div>
 
       <v-row v-else>
@@ -260,7 +260,7 @@ function printReceipt() {
 
 function finish() {
   receiptDialog.value = false
-  navigateTo('/')
+  navigateTo('/shop')
 }
 </script>
 

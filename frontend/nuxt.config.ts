@@ -21,6 +21,7 @@ export default defineNuxtConfig({
   },
 
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       title: 'Drip & Scents — Perfume · Shoes · Bags · Clothes',
       link: [

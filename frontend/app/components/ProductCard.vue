@@ -9,14 +9,17 @@
     </aside>
 
     <div class="pcard-media">
-      <template v-if="imageUrl">
-        <!-- Malabong kopya ng picture sa likod, para walang puting gilid -->
-        <div class="pcard-blur" :style="{ backgroundImage: `url('${imageUrl}')` }" aria-hidden="true" />
-        <div class="pcard-frame">
-          <v-img :src="imageUrl" :alt="product.name" :aspect-ratio="1" :cover="false" class="pcard-img" />
-        </div>
-      </template>
-      <div v-else class="pcard-empty"><v-icon icon="mdi-image-off-outline" size="40" /></div>
+      <!-- Pag-click sa picture: papunta sa product page -->
+      <NuxtLink :to="`/product/${product.documentId}`" class="pcard-link" :aria-label="`View ${product.name}`">
+        <template v-if="imageUrl">
+          <!-- Malabong kopya ng picture sa likod, para walang puting gilid -->
+          <div class="pcard-blur" :style="{ backgroundImage: `url('${imageUrl}')` }" aria-hidden="true" />
+          <div class="pcard-frame">
+            <v-img :src="imageUrl" :alt="product.name" :aspect-ratio="1" :cover="false" class="pcard-img" />
+          </div>
+        </template>
+        <div v-else class="pcard-empty"><v-icon icon="mdi-image-off-outline" size="40" /></div>
+      </NuxtLink>
 
       <button
         type="button" class="pcard-heart" :class="{ on: wished }"
@@ -32,7 +35,7 @@
 
     <div class="pcard-body">
       <p class="pcard-cat">{{ product.category }}</p>
-      <h3 class="pcard-name">{{ product.name }}</h3>
+      <h3 class="pcard-name"><NuxtLink :to="`/product/${product.documentId}`" class="pcard-name-link">{{ product.name }}</NuxtLink></h3>
       <p class="pcard-desc line-clamp-2">{{ product.description || 'No description.' }}</p>
       <span class="sr-only">{{ product.description }}</span>
 
@@ -154,6 +157,9 @@ function onWishlist() {
     0 0 40px rgba(196, 160, 106, 0.12);
 }
 .pcard-media { position: relative; background: #F4F2EF; overflow: hidden; }
+.pcard-link { display: block; position: relative; color: inherit; }
+.pcard-name-link { color: inherit; text-decoration: none; }
+.pcard-name-link:hover { color: var(--gold); }
 .pcard-blur {
   position: absolute; inset: -20px;
   background-size: cover; background-position: center;

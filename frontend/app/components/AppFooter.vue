@@ -7,7 +7,9 @@
       </div>
       <div>
         <div class="f-head">Shop</div>
-        <NuxtLink to="/" class="f-link">The collection</NuxtLink>
+        <NuxtLink to="/" class="f-link">Home</NuxtLink>
+        <NuxtLink to="/shop" class="f-link">The collection</NuxtLink>
+        <NuxtLink to="/about" class="f-link">Our story</NuxtLink>
         <NuxtLink to="/checkout" class="f-link">Checkout</NuxtLink>
       </div>
       <div>
